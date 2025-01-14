@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wing Design Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        .container h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+        }
+        .output p {
+            background: #f8f9fa;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wing Design Calculator</h1>
+        <form id="calculatorForm">
+            <div class="form-group">
+                <label for="weight">Weight:</label>
+                <input type="number" id="weight" name="weight" required>
+            </div>
+            <div class="form-group">
+                <label for="wingLoading">Wing Loading:</label>
+                <input type="number" id="wingLoading" name="wingLoading" required>
+            </div>
+            <div class="form-group">
+                <label for="aspectRatio">Wing Aspect Ratio:</label>
+                <input type="number" id="aspectRatio" name="aspectRatio" required>
+            </div>
+            <div class="form-group">
+                <label for="htTaperRatio">Taper Ratio of HT:</label>
+                <input type="number" id="htTaperRatio" name="htTaperRatio" required>
+            </div>
+            <div class="form-group">
+                <label for="htAspectRatio">Aspect Ratio of HT:</label>
+                <input type="number" id="htAspectRatio" name="htAspectRatio" required>
+            </div>
+            <div class="form-group">
+                <label for="vtTaperRatio">Taper Ratio of VT:</label>
+                <input type="number" id="vtTaperRatio" name="vtTaperRatio" required>
+            </div>
+            <div class="form-group">
+                <label for="vtAspectRatio">Aspect Ratio of VT:</label>
+                <input type="number" id="vtAspectRatio" name="vtAspectRatio" required>
+            </div>
+            <div class="form-group">
+                <button type="button" onclick="calculateValues()">Calculate</button>
+            </div>
+        </form>
+        <div class="output" id="output"></div>
+    </div>
+
+    <script>
+        function calculateValues() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const wingLoading = parseFloat(document.getElementById('wingLoading').value);
+            const aspectRatio = parseFloat(document.getElementById('aspectRatio').value);
+            const htTaperRatio = parseFloat(document.getElementById('htTaperRatio').value);
+            const htAspectRatio = parseFloat(document.getElementById('htAspectRatio').value);
+            const vtTaperRatio = parseFloat(document.getElementById('vtTaperRatio').value);
+            const vtAspectRatio = parseFloat(document.getElementById('vtAspectRatio').value);
+
+            const sw = weight / wingLoading;
+            const b = Math.sqrt(sw * aspectRatio);
+            const a = b / aspectRatio;
+            const tfl = 0.7 * b;
+            const tma = 0.6 * tfl;
+            const sht = (0.5 * a * sw) / tma;
+            const ea = 0.4 * sht;
+            const hta = 0.6 * sht;
+            const hmac = Math.sqrt(hta / htAspectRatio);
+            const v = (9 * hmac) / 7;
+            const x = v * htTaperRatio;
+            const y = (hta * 2) / (3 * x);
+            const t = (y / 6) * (2 / 1.5);
+            const r = (x * t) / (y / 2);
+            const ml = tma - r - (0.75 * a);
+            const z = ea / y;
+            const fl = tfl - a - ml - v - z;
+            const svt = (0.04 * b * sw) / tma;
+            const ra = 0.4 * svt;
+            const vta = 0.6 * svt;
+            const temp = vtAspectRatio - 0.5;
+            const p = Math.sqrt(ra / temp);
+            const q = p * vtAspectRatio;
+            const n = (vta * 2) / ((1 + vtTaperRatio) * q);
+            const m = n * vtTaperRatio;
+
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = `
+                <p>a = ${(a * 100).toFixed(2)}</p>
+                <p>b = ${(b * 100).toFixed(2)}</p>
+                <p>tfl = ${(tfl * 100).toFixed(2)}</p>
+                <p>tma = ${(tma * 100).toFixed(2)}</p>
+                <p>hmac = ${(hmac * 100).toFixed(2)}</p>
+                <p>v = ${(v * 100).toFixed(2)}</p>
+                <p>x = ${(x * 100).toFixed(2)}</p>
+                <p>y = ${(y * 100).toFixed(2)}</p>
+                <p>z = ${(z * 100).toFixed(2)}</p>
+                <p>p = ${(p * 100).toFixed(2)}</p>
+                <p>q = ${(q * 100).toFixed(2)}</p>
+                <p>m = ${(m * 100).toFixed(2)}</p>
+                <p>n = ${(n * 100).toFixed(2)}</p>
+                <p>ml = ${(ml * 100).toFixed(2)}</p>
+                <p>fl = ${(fl * 100).toFixed(2)}</p>
+            `;
+        }
+    </script>
+</body>
+</html>
