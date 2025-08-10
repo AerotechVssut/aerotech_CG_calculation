@@ -1,35 +1,83 @@
-<!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wing Design Calculator</title>
     <style>
+        /* Custom font: Mokoto. Place font files in ./fonts/ */
+        @font-face {
+            font-family: 'Mokoto';
+            src: url('fonts/mokoto.woff2') format('woff2'),
+                 url('fonts/mokoto.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Mokoto', Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            width: 100%;
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            padding: 12px 16px;
+            box-sizing: border-box;
+        }
+        .header .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            max-width: 1100px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .header img.logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        .header .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #222;
+            letter-spacing: 0.5px;
+        }
+        .main {
+            flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            padding: 24px 16px;
+            box-sizing: border-box;
         }
         .container {
             background: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            max-width: 960px;
             width: 100%;
         }
         .container h1 {
             text-align: center;
             margin-bottom: 20px;
         }
-        .form-group {
-            margin-bottom: 15px;
+        /* Two-column layout for the form to keep everything above the fold */
+        #calculatorForm {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(220px, 1fr));
+            gap: 18px 24px; /* row-gap column-gap */
+            align-items: start;
         }
+        .form-group { margin-bottom: 0; }
         .form-group label {
             display: block;
             margin-bottom: 5px;
@@ -40,6 +88,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            margin-top: 4px; /* space under label */
         }
         .form-group button {
             width: 100%;
@@ -55,7 +104,7 @@
             background-color: #0056b3;
         }
         .output {
-            margin-top: 20px;
+            margin-top: 16px;
         }
         .output p {
             background: #f8f9fa;
@@ -64,9 +113,36 @@
             border-radius: 4px;
             margin-bottom: 10px;
         }
+
+        /* Utilities */
+        .full-span { grid-column: 1 / -1; }
+
+        /* Tablet tweaks */
+        @media (max-width: 900px) {
+            .container { max-width: 740px; }
+            #calculatorForm { grid-template-columns: repeat(2, minmax(200px, 1fr)); gap: 16px 20px; }
+            .container h1 { font-size: 28px; margin-bottom: 16px; }
+        }
+
+        /* Mobile: stack and tighten spacing */
+        @media (max-width: 640px) {
+            .header img.logo { width: 32px; height: 32px; }
+            .header .title { font-size: 18px; }
+            .main { padding: 16px 12px; }
+            .container { padding: 16px; max-width: 100%; }
+            #calculatorForm { grid-template-columns: 1fr; gap: 14px 0; }
+            .form-group input { padding: 8px; }
+        }
     </style>
 </head>
 <body>
+    <header class="header">
+        <div class="brand">
+            <img class="logo" src="logo.png" alt="AeroTech Club Logo" />
+            <div class="title">Team AeroTech</div>
+        </div>
+    </header>
+    <div class="main">
     <div class="container">
         <h1>Wing Design Calculator</h1>
         <form id="calculatorForm">
@@ -98,11 +174,12 @@
                 <label for="vtAspectRatio">Aspect Ratio of VT:</label>
                 <input type="number" id="vtAspectRatio" name="vtAspectRatio" required>
             </div>
-            <div class="form-group">
+            <div class="form-group full-span">
                 <button type="button" onclick="calculateValues()">Calculate</button>
             </div>
         </form>
         <div class="output" id="output"></div>
+    </div>
     </div>
 
     <script>
